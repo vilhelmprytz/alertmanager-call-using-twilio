@@ -25,13 +25,13 @@ def call():
         return jsonify({"error": msg}), 400
 
     content = request.json
-    msg = f"You have {len(content['alerts'])} alerts. {', '.join([alert['annotations'] for alert in content['alerts']])}"
+    msg = f"You have {len(content['alerts'])} alerts. {', '.join([str(alert['annotations']['summary']) for alert in content['alerts']])}"
 
     try:
         res = twilio_client.calls.create(
             from_=app.config["TWILIO_CALLER_ID"],
             to=phone_number,
-            url="https://twimlets.com/message?Message[0]=Hello%20World",
+            url="https://twimlets.com/message?Message[0]={0}".format(msg),
         )
     except Exception as e:
         app.logger.error(e)
